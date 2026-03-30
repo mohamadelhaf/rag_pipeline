@@ -8,12 +8,14 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda, chain
 import os
+from logger import log_interaction
+import time
 
 load_dotenv()
 
 store = {}
 
-AGENTS = ["HR", "Tech", "compliance", "pm", "general"]
+AGENTS = ["hr", "tech", "compliance", "pm", "general"]
 
 def get_session_history(session_id :str) -> BaseChatMessageHistory:
     if session_id  not in store:
@@ -44,6 +46,11 @@ def detect_agent(question: str, llm) -> str:
         return "general"
     return result             
 
+def extract_question(x):
+    if isinstance(x, dict):
+        return x.get("question", "")
+    return str(x)
+
 def load_chat_chain(vectorstore, llm, agent_filter):
     retriever = vectorstore.as_retriever(search_kwargs={"k":3, "filter":{"agent" : agent_filter}})
 
@@ -53,7 +60,7 @@ def load_chat_chain(vectorstore, llm, agent_filter):
                                               {context}"""),
                                               MessagesPlaceholder(variable_name="history"),
                                               ("human", "{question}")])
-    chain = ({"context" :(lambda x: x["question"]) | retriever | format_docs, "question" : lambda x: x["question"], "history" : lambda x: x.get("history", [])} | prompt |llm | StrOutputParser())
+    chain = ({ "context": RunnableLambda(extract_question) | retriever | format_docs, "question": RunnableLambda(extract_question), "history": lambda x: x.get("history", []) if isinstance(x, dict) else []} | prompt |llm | StrOutputParser())
 
     chain_with_history = RunnableWithMessageHistory(chain, get_session_history, input_messages_key="question", history_messages_key="history")
     return chain_with_history
@@ -63,7 +70,7 @@ def main():
     print("EnergyCo AI Assistant")
     print("Type your question or  'exit' or 'quit' or 'q' to quit")
     print("loading assistant...")
-    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("BASE_URL"))
+    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("OLLAMA_BASE_URL"))
     vectorstore = Chroma(persist_directory=os.getenv("CHROMA_DB_PATH"), embedding_function=embeddings)
     llm = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
     session_id= 'user_1'
@@ -83,10 +90,16 @@ def main():
 
         chain = load_chat_chain(vectorstore, llm, agent)
 
+        chunks = vectorstore.similarity_search(question, k=3, filter={"agent":agent})
+        start =time.time()
+
+
         print("Assistant ", end="", flush=True)
         answer = chain.invoke({"question": question}, config={"configurable": {"session_id": session_id}})
+        duration_ms = int((time.time() - start) * 1000)
         print(f"{answer}")
         print()
+        log_interaction(question, agent, chunks, answer, duration_ms)
 
 if __name__ == "__main__":
     main()

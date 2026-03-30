@@ -9,7 +9,7 @@ from langchain_core.prompts import PromptTemplate
 load_dotenv()
 
 def load_rag_chain():
-    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("BASE_URL"))
+    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("OLLAMA_BASE_URL"))
     vectorstore = Chroma(persist_directory=os.getenv("CHROMA_DB_PATH"),embedding_function=embeddings)
     retriever = vectorstore.as_retriever(search_kwargs = {"k": 3})
     llm = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
