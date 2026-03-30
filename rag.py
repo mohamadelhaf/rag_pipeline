@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os 
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, chain
 from langchain_core.prompts import PromptTemplate

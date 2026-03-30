@@ -1,17 +1,19 @@
 from dotenv import load_dotenv
 from langchain_ollama import OllamaLLM, OllamaEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_chroma import Chroma
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, chain
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda, chain
 import os
 
 load_dotenv()
 
 store = {}
+
+AGENTS = ["HR", "Tech", "compliance", "pm", "general"]
 
 def get_session_history(session_id :str) -> BaseChatMessageHistory:
     if session_id  not in store:
@@ -21,13 +23,32 @@ def get_session_history(session_id :str) -> BaseChatMessageHistory:
 def format_docs(docs):
     return "\n\n".join([doc.page_content for doc in docs])
 
-def load_chat_chain():
-    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("BASE_URL"))
+def detect_agent(question: str, llm) -> str:
+    prompt = PromptTemplate.from_template(
+    "Classify this question into exactly one of these categories: " +
+        f"{', '.join(AGENTS)}.\n\n" +
+        "Rules:\n"
+        "- hr: leave days, vacation, sick leave, onboarding, remote work, performance, CV, salary\n"
+        "- tech: servers, code, systems, architecture, Linux, restart, deployment\n"
+        "- compliance: GDPR, security, legal, regulations, data privacy\n"
+        "- pm: projects, tasks, deadlines, meetings, planning\n"
+        "- general: anything else\n\n"
+        "Reply with ONLY one word from the list above. No explanation.\n\n"
+        "Question: {question}\n"
+        "Category:")
 
-    vectorstore = Chroma(persist_directory=os.getenv("CHROMA_DB_PATH"), embedding_function=embeddings)
-    retriever = vectorstore.as_retriever(search_kwargs={"k":3})
-    llm = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
-    prompt=ChatPromptTemplate.from_messages([("system", """You are an internal HR assistant for energyCo. Answer using ONLY the context provided below. If the answer is not in the context, say ' I don't have this information. '
+    chain = prompt | llm | StrOutputParser()
+    result = chain.invoke({"question": question}).strip().lower()
+
+    if result not in AGENTS:
+        return "general"
+    return result             
+
+def load_chat_chain(vectorstore, llm, agent_filter):
+    retriever = vectorstore.as_retriever(search_kwargs={"k":3, "filter":{"agent" : agent_filter}})
+
+    
+    prompt=ChatPromptTemplate.from_messages([("system", """You are an internal  assistant for energyCo. Answer using ONLY the context provided below. If the answer is not in the context, say ' I don't have this information. '
                                               context:
                                               {context}"""),
                                               MessagesPlaceholder(variable_name="history"),
@@ -36,18 +57,31 @@ def load_chat_chain():
 
     chain_with_history = RunnableWithMessageHistory(chain, get_session_history, input_messages_key="question", history_messages_key="history")
     return chain_with_history
+
+
 def main():
-    print("EnergyCo HR Assistant Chat")
+    print("EnergyCo AI Assistant")
     print("Type your question or  'exit' or 'quit' or 'q' to quit")
     print("loading assistant...")
-    chain = load_chat_chain()
+    embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("BASE_URL"))
+    vectorstore = Chroma(persist_directory=os.getenv("CHROMA_DB_PATH"), embedding_function=embeddings)
+    llm = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
     session_id= 'user_1'
     print("Assistant loaded. You can start asking questions.")
     while True:
         question = input("You: ").strip()
+
+        if not question:
+            continue
+
         if question.lower() in ["exit", "quit", "q"]:
             print("Exiting chat. Goodbye!")
             break
+
+        agent = detect_agent(question, llm)
+        print(f"Routing to {agent} agent...")
+
+        chain = load_chat_chain(vectorstore, llm, agent)
 
         print("Assistant ", end="", flush=True)
         answer = chain.invoke({"question": question}, config={"configurable": {"session_id": session_id}})
