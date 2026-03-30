@@ -1,0 +1,18 @@
+EnergyCo HR Policy Document
+
+Onboarding:
+New employees must complete onboarding within 30 days of their start date.
+Onboarding includes safety training, IT setup, and a meeting with their manager.
+
+Leave Policy:
+Employees are entitled to 25 days of paid leave per year.
+Leave requests must be submitted at least 2 weeks in advance via the HR portal.
+Sick leave is separate and requires a medical certificate after 3 consecutive days.
+
+Remote Work:
+Employees may work remotely up to 3 days per week with manager approval.
+Remote work requires a stable internet connection and a dedicated workspace.
+
+Performance Reviews:
+Performance reviews are conducted twice a year, in June and December.
+Employees are rated on a scale of 1 to 5 across technical skills, collaboration, and delivery.
