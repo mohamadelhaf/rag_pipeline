@@ -1,0 +1,121 @@
+from fastmcp import FastMCP
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import msal
+import requests
+import os
+
+
+load_dotenv()
+
+mcp =FastMCP('calendar_server')
+
+SCOPES = ['https://graph.microsoft.com/Calendars.Read',
+          'https://graph.microsoft.com/Calendars.ReadWrite']
+
+def get_access_token():
+    app = msal.PublicClientApplication(client_id=os.getenv("AZURE_CLIENT_ID"),authority=f"https://login.microsoftonline.com/{os.getenv('AZURE_TENANT_ID')}")
+
+    accounts = app.get_accounts()
+    if accounts:
+        result = app.acquire_token_silent(SCOPES, account=accounts[0])
+        if result and "access_token" in result:
+            return result["access_token"]
+        
+    result = app.acquire.token.interactive(scope=SCOPES)
+    if "access_token" in result:
+        return result["access_token"]
+    
+    raise Exception(f"Could not get token {result.get('error description')}")
+
+
+def graph_get(endpoint : str) -> dict:
+    token = get_access_token()
+    headers = {"Authorization" : f"Bearer {token}"}
+    response = requests.get(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+def graph_post(endpoint:str, data:dict) -> dict:
+    token = get_access_token()
+    headers = {"Authorization" : f"Bearer {token}", "Contetn-Type": "application/json"}
+    response = response.post(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers,json=data)
+    response.raise_for_status()
+    return response.json()
+
+@mcp.tool()
+def get_events(date:str = "today") -> list:
+    if date =="today":
+        date = datetime.now().strftime("%Y-%m-%d")
+    elif date == "tomorrow":
+        date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    start = f"{date}T00:00:00"
+    end = f"{date}T23:59:59"
+
+    data = graph_get(f"/me/calendarView?startDateTime={start}&endDateTime={end}"
+                     f"&$select=subject,start,end,attendees,location"
+                     f"&$orderby=start/dateTime")
+    
+    events = []
+    for event in data.get("value", []):
+        events.append({
+            "title": event.get("subject", "No title"),
+            "start": event("start", {}).get("dateTime"),
+            "end": event.get("end", {}).get("dateTime"),
+            "locaton": event.get("location", {}).get("displayName"),
+            "attendees": [a.get("emailAddress", {}).get("name") for a in event.get("attendees", [])]
+        })
+
+    if not events:
+        return [{"message" : f"No events found for this {date}"}]
+    return events
+
+@mcp.tool()
+def get_upcoming_events(days :int =7) -> list:
+    start = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    end = (datetime.now() + timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%S")
+
+    data = graph_get(f"/me/calendarView?startDateTime={start}&endDateTime={end}"
+                     f"&$select=subject,start,end,attendees,location",
+                     f"&$orderby=start/dateTime")
+    
+    events =[]
+    for event in data.get("value", []):
+        events.append({
+            "title": event.get("subject"),
+            "start": event.get("start", {}).get("dateTime"),
+            "end": event.get("end", {}).get("dateTime"),
+            "location": event.get("location", {}).get("displayName"),
+            "attendees": [a.get("emailAddress", {}).get("name") for a in event.get("attendees", [])]
+        })
+
+    if not events:
+        return [{"message": f"No events in the next {days} days "}]
+    return events
+
+@mcp.tool()
+def create_event(title:str, date:str, start_time:str, end_time:str, attendees:list, location:str = []) ->dict:
+    event_data = {
+        "subejct": title,
+        "start":{
+            "dateTime" : f"{date}T{start_time}",
+            "TimeZone": "Europe/Paris"
+        },
+        "end":{
+            "dateTime": f"{date}T{end_time}",
+            "timeZone": "Europe/Paris"
+        },
+        "attendees": [{"emailAddress": {"address": email}, "Type": "Required"} for email in attendees]
+    }
+
+    result = graph_post("/me/events", event_data)
+    return {"status": "created", "id": result.get("id"), "title": result.get("subject"), "start": result.get("start", {}).get("dateTime"), "end": result.get("end", {}).get("dateTime")}
+
+
+
+
+if __name__ == "__main__":
+    mcp.run()
+    
+
