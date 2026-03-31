@@ -1,0 +1,29 @@
+EnergyCo GDPR Compliance Policy
+
+Data Classification:
+Personal data includes: names, email addresses, phone numbers, location data.
+Sensitive personal data includes: health data, biometric data, political opinions.
+All personal data must be classified before processing.
+
+Data Retention:
+Employee data: retained for 5 years after employment ends.
+Customer data: retained for 3 years after last interaction.
+Log files containing personal data: maximum 90 days retention.
+Financial records: 10 years as required by French law.
+
+Data Subject Rights:
+Employees and customers have the right to access their personal data.
+Data access requests must be fulfilled within 30 days.
+Right to erasure requests must be evaluated by the Legal team.
+Data portability requests must provide data in machine-readable format.
+
+Data Breach Procedure:
+Any suspected data breach must be reported to the DPO within 24 hours.
+CNIL must be notified within 72 hours of confirmed breach.
+Affected individuals must be notified without undue delay.
+All breaches must be documented in the breach register.
+
+Third Party Processing:
+All third-party processors must sign a Data Processing Agreement.
+Cloud providers must have EU data residency or adequate protection.
+Annual audit of third-party processors is mandatory.

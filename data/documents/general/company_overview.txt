@@ -1,0 +1,33 @@
+EnergyCo Company Overview
+
+About EnergyCo:
+EnergyCo is a leading energy company operating across France and Europe.
+Founded in 1945, EnergyCo employs over 150,000 people worldwide.
+Headquarters: Paris, France.
+EnergyCo is committed to the energy transition and carbon neutrality by 2050.
+
+Organizational Structure:
+EnergyCo is divided into 5 main divisions:
+- Generation: nuclear, renewable, and thermal energy production
+- Distribution: electricity grid management and maintenance
+- Digital (DIGIT): IT systems, digital transformation, and AI
+- Finance: financial planning, accounting, and treasury
+- HR: human resources, talent management, and training
+
+DIGIT Division:
+The DIGIT division is responsible for all IT and digital initiatives.
+DIGIT employs over 5000 IT professionals across France.
+Key focus areas: cloud migration, AI/ML, cybersecurity, and data platforms.
+DIGIT operates under the CIO who reports directly to the CEO.
+
+Values:
+Safety first: no compromise on safety in any operation.
+Integrity: transparency and honesty in all interactions.
+Innovation: continuous improvement and adoption of new technologies.
+Sustainability: commitment to reducing environmental impact.
+
+Contact:
+General inquiries: info@energyco.com
+IT support: helpdesk@energyco.com
+HR inquiries: hr@energyco.com
+Security incidents: security@energyco.com

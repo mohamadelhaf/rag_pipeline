@@ -1,0 +1,32 @@
+EnergyCo Technical Infrastructure Guide
+
+Server Management:
+All production servers run on Linux Ubuntu 22.04 LTS.
+To restart a server: sudo systemctl restart <service_name>
+To check server status: sudo systemctl status <service_name>
+SSH access requires VPN connection and a valid SSH key registered with IT.
+
+Docker: 
+All microservices are containerized using Docker.
+To start all services: docker-compose up -d
+To stop all services: docker-compose down
+To view logs: docker logs <container_name> -f
+Images are stored in the internal registry at registry.energyco.internal
+
+Kubernetes:
+Production workloads run on Kubernetes cluster k8s-prod-01.
+To deploy: kubectl apply -f deployment.yaml
+To check pods: kubectl get pods -n production
+To view pod logs: kubectl logs <pod_name> -n production
+
+Database Access:
+PostgreSQL production DB: db-prod.energyco.internal:5432
+Read-only replica for analytics: db-replica.energyco.internal:5432
+All credentials are stored in Azure Key Vault.
+Never hardcode database credentials in code.
+
+Incident Response:
+P1 incidents must be reported within 15 minutes to the on-call team.
+On-call rotation is managed via PagerDuty.
+Incident channel: Teams #incidents-prod
+Post-mortem required for all P1 and P2 incidents within 48 hours.

@@ -1,0 +1,32 @@
+EnergyCo API Development Standards
+
+REST API Guidelines:
+All APIs must follow RESTful conventions.
+Use plural nouns for endpoints: /employees not /employee
+HTTP methods: GET (read), POST (create), PUT (update), DELETE (delete)
+All responses must return JSON with Content-Type: application/json
+API versioning is mandatory: /api/v1/resource
+
+Authentication:
+All APIs must use OAuth2 with Azure AD.
+JWT tokens expire after 1 hour.
+Refresh tokens are valid for 24 hours.
+Never pass tokens in URL parameters, always use Authorization header.
+
+Error Handling:
+400 Bad Request: invalid input
+401 Unauthorized: missing or invalid token
+403 Forbidden: insufficient permissions
+404 Not Found: resource does not exist
+500 Internal Server Error: unexpected server error
+All error responses must include a message and error_code field.
+
+Performance Standards:
+API response time must be under 200ms for 95% of requests.
+Maximum payload size: 10MB
+Rate limiting: 1000 requests per minute per client
+Pagination required for endpoints returning more than 100 items.
+
+Documentation:
+All APIs must be documented using OpenAPI 3.0 (Swagger).
+Documentation must be kept up to date with every release.

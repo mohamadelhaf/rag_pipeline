@@ -1,0 +1,36 @@
+EnergyCo Meeting Standards and Templates
+
+Meeting Best Practices:
+All meetings must have a clear agenda sent 24 hours in advance.
+Maximum meeting duration: 2 hours without a break.
+Meetings should have a designated facilitator and note-taker.
+Action items must be assigned with owner and due date.
+Meeting minutes must be shared within 24 hours.
+
+Standup Template:
+1. What did I complete yesterday?
+2. What will I work on today?
+3. Are there any blockers?
+Duration: 15 minutes maximum. No problem-solving during standup.
+
+Sprint Planning Template:
+1. Review sprint goal (5 min)
+2. Review velocity from last sprint (10 min)
+3. Select backlog items (45 min)
+4. Break items into tasks (30 min)
+5. Confirm sprint commitment (10 min)
+Duration: 2 hours for 2-week sprint.
+
+Steering Committee Template:
+1. Executive summary (10 min)
+2. Progress against milestones (15 min)
+3. Budget status (10 min)
+4. Risk and issues update (10 min)
+5. Decisions required (15 min)
+Duration: 1 hour.
+
+Retrospective Template:
+1. What went well?
+2. What could be improved?
+3. What will we commit to change next sprint?
+Duration: 1 hour for 2-week sprint.

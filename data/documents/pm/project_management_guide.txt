@@ -1,0 +1,32 @@
+EnergyCo Project Management Guidelines
+
+Project Lifecycle:
+All projects follow a 5-phase approach: Initiation, Planning, Execution, Monitoring, Closure.
+Projects above 50k euros require a formal business case and executive sponsor.
+Project charter must be approved before kickoff.
+Lessons learned session is mandatory at project closure.
+
+Agile Methodology:
+Development teams use 2-week sprints.
+Sprint planning occurs every other Monday at 9:00 AM.
+Daily standups are 15 minutes maximum at 9:30 AM.
+Sprint retrospectives are held on the last Friday of each sprint.
+Product backlog must be groomed weekly by the Product Owner.
+
+Reporting:
+Weekly status report must be submitted every Friday by 5 PM.
+Status colors: Green (on track), Amber (at risk), Red (delayed).
+Project dashboard must be updated in real time in SharePoint.
+Steering committee meeting held monthly for projects above 100k euros.
+
+Risk Management:
+All risks must be logged in the risk register.
+Risk probability and impact scored 1-5.
+Risks with score above 15 require immediate escalation.
+Risk register must be reviewed weekly during project execution.
+
+Budget Management:
+Budget variance above 10% requires formal change request.
+All expenses above 5000 euros require two approvals.
+Monthly budget review with finance team is mandatory.
+Contingency reserve of 15% must be included in all project budgets.

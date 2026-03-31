@@ -1,0 +1,31 @@
+EnergyCo Information Security Policy
+
+Password Policy:
+Minimum password length: 12 characters.
+Must contain uppercase, lowercase, numbers, and special characters.
+Passwords must be changed every 90 days.
+Password reuse is prohibited for the last 12 passwords.
+Multi-factor authentication is mandatory for all systems.
+
+Access Control:
+Access to systems follows the principle of least privilege.
+Access requests must be approved by the employee manager and IT security.
+Access reviews are conducted every 6 months.
+Terminated employee accounts must be disabled within 24 hours.
+
+Device Security:
+All company devices must have full disk encryption enabled.
+Antivirus software must be installed and kept up to date.
+Personal devices may not access production systems.
+Lost or stolen devices must be reported to IT within 1 hour.
+
+Network Security:
+VPN is mandatory when accessing company resources remotely.
+Public WiFi must not be used without VPN.
+All network traffic is logged and monitored.
+Firewall rules must be reviewed and approved by IT Security.
+
+Incident Reporting:
+Security incidents must be reported to security@energyco.com immediately.
+Phishing emails must be forwarded to phishing@energyco.com.
+Never click suspicious links or open unexpected attachments.
