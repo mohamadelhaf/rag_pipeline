@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 import os
 import sys
 import glob
-import shutil
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
@@ -62,9 +61,12 @@ def ingest_docs(reset=False):
 
     chroma_path = os.getenv("CHROMA_DB_PATH")
 
-    if reset and os.path.exists(chroma_path):
-        print(f'Resetting ChromaFB at {chroma_path}')
-        shutil.rmtree(chroma_path)
+    if reset:
+        print(f"Resetting ChromaDB at {chroma_path}")
+        import chromadb
+        client = chromadb.PersistentClient(path=chroma_path)
+        for collection in client.list_collections():
+            client.delete_collection(collection.name)
         print("Cleared existing ChromaDB")
 
     print("Loading documents")

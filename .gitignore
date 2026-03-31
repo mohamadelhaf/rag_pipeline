@@ -3,3 +3,4 @@ chromad_db/
 __pycache__/
 .venv/
 EOF
+.env.local

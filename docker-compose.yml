@@ -1,0 +1,62 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: energyco-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  ollama_pull:
+    image: ollama/ollama:latest
+    container_name: energyco-ollama-pull
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: >
+      /bin/sh -c "
+        ollama pull mistral &&
+        ollama pull nomic-embed-text
+      "
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  ingest:
+    build: .
+    container_name: energyco-ingest
+    command: python ingest.py --reset
+    volumes:
+      - ./data:/app/data
+      - ./chroma_db:/app/chroma_db
+    env_file:
+      - .env
+    depends_on:
+      ollama_pull:
+        condition: service_completed_successfully
+
+  chat_app:
+    build: .
+    container_name: energyco-chat
+    command: python chat.py
+    volumes:
+      - ./data:/app/data
+      - ./chroma_db:/app/chroma_db
+      - ./logs:/app/logs
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    depends_on:
+      ingest:
+        condition: service_completed_successfully
+
+volumes:
+  ollama_data:

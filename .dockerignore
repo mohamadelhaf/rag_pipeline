@@ -1,0 +1,10 @@
+.env
+.env.local
+.venv/
+__pycache__/
+chroma_db/
+logs/
+.git/
+*.pyc
+*.pyo
+data/db/*.db
