@@ -10,12 +10,29 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda, chain
 import os
 from logger import log_interaction
 import time
+import subprocess
+import chromadb
+
+
 
 load_dotenv()
 
 store = {}
 
 AGENTS = ["hr", "tech", "compliance", "pm", "general"]
+
+
+def ensure_ingested():
+    chroma_path = os.getenv("CHROMA_DB_PATH")
+    try:
+        client = chromadb.PersistentClient(path=chroma_path)
+        collections = client.list_collections()
+        if not collections:
+            print("No collections found in ChromaDB. Running ingestions ")
+            subprocess.run(["python", "ingest.py"], check=True)
+    except Exception as e:
+        print("ChromaDB not ready. Running ingestions.")
+        subprocess.run(["python", "ingest.py"], check=True)
 
 def get_session_history(session_id :str) -> BaseChatMessageHistory:
     if session_id  not in store:
@@ -70,6 +87,7 @@ def main():
     print("EnergyCo AI Assistant")
     print("Type your question or  'exit' or 'quit' or 'q' to quit")
     print("loading assistant...")
+    ensure_ingested()
     embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url = os.getenv("OLLAMA_BASE_URL"))
     vectorstore = Chroma(persist_directory=os.getenv("CHROMA_DB_PATH"), embedding_function=embeddings)
     llm = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
