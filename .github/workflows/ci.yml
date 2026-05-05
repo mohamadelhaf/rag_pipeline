@@ -53,18 +53,21 @@ jobs:
           key: ${{ runner.os }}-pip-security-${{ hashFiles('requirements.txt') }}
           restore-keys: ${{ runner.os }}-pip-security-
 
-      - name: Install dependencies and security tools
+      # audit deps in an isolated venv so bandit's own deps don't pollute results
+      - name: pip-audit — dependency vulnerability scan
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt bandit pip-audit
+          python3 -m venv /tmp/audit-env
+          /tmp/audit-env/bin/pip install --upgrade pip -q
+          /tmp/audit-env/bin/pip install pip-audit -q
+          /tmp/audit-env/bin/pip install -r requirements.txt -q
+          /tmp/audit-env/bin/pip-audit
+
+      - name: Install bandit
+        run: pip install bandit
 
       # scan source files explicitly — avoids bandit incorrectly traversing .venv
       - name: Bandit — source security scan
         run: bandit -r api.py chat.py ingest.py rag.py orchestrator.py logger.py mcp_servers/ -ll
-
-      # audit the already-installed environment — avoids dep-resolution conflicts
-      - name: pip-audit — dependency vulnerability scan
-        run: pip-audit
 
   # ── Tests (needs lint to pass) ───────────────────────────────────────────
   test:

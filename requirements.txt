@@ -13,7 +13,7 @@ msal==1.35.1
 requests==2.33.0
 ollama==0.6.1
 fastapi==0.115.12
-uvicorn==0.34.2
+uvicorn==0.42.0
 
 # pinned to patched versions to resolve known CVEs in transitive deps
 authlib==1.6.11
