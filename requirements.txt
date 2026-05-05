@@ -1,16 +1,23 @@
 langchain==1.2.13
 langchain-chroma==1.1.0
 langchain-community==0.4.1
-langchain-core==1.2.23
+langchain-core==1.3.2
 langchain-ollama==1.0.1
-langchain-text-splitters==1.1.1
+langchain-text-splitters==1.1.2
 chromadb==1.5.5
 fastmcp==3.2.0
 semantic-kernel==1.41.1
-pypdf==6.9.2
+pypdf==6.10.2
 python-dotenv==1.2.2
 msal==1.35.1
 requests==2.33.0
 ollama==0.6.1
 fastapi==0.115.12
 uvicorn==0.34.2
+
+# pinned to patched versions to resolve known CVEs in transitive deps
+authlib==1.6.11
+cryptography==46.0.7
+langsmith==0.7.31
+python-multipart==0.0.26
+werkzeug==3.1.6
