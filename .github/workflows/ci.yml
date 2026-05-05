@@ -22,8 +22,8 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          key: ${{ runner.os }}-pip-lint-${{ hashFiles('requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-lint-
 
       - name: Install linting tools
         run: pip install flake8
@@ -53,16 +53,16 @@ jobs:
           key: ${{ runner.os }}-pip-security-${{ hashFiles('requirements.txt') }}
           restore-keys: ${{ runner.os }}-pip-security-
 
-      - name: Install security tools
-        run: pip install bandit pip-audit
+      - name: Install dependencies and security tools
+        run: pip install -r requirements.txt bandit pip-audit
 
-      # scan source for common security issues (skip test file)
+      # scan source only (exclude venv and test artefacts)
       - name: Bandit — source security scan
-        run: bandit -r . --exclude .venv,tests -ll
+        run: bandit -r . --exclude ./.venv,./chroma_db,./logs,./data -ll
 
-      # check all dependencies for known CVEs
+      # audit the already-installed environment — avoids dep-resolution conflicts
       - name: pip-audit — dependency vulnerability scan
-        run: pip-audit -r requirements.txt
+        run: pip-audit
 
   # ── Tests (needs lint to pass) ───────────────────────────────────────────
   test:
@@ -80,14 +80,13 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
+          key: ${{ runner.os }}-pip-test-${{ hashFiles('requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-test-
 
       - name: Install dev dependencies
         run: pip install pytest pytest-asyncio
 
-      # MCP server tests require running services so are skipped in CI;
-      # only unit-level tests that can run without Ollama or ChromaDB are run
+      # MCP server tests require running Ollama + ChromaDB — skipped in CI
       - name: Run tests
         run: pytest -v --ignore=test_mcp.py || true
 

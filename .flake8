@@ -1,0 +1,40 @@
+[flake8]
+max-line-length = 120
+exclude =
+    .venv,
+    __pycache__,
+    .git,
+    chroma_db,
+    logs,
+    data
+
+extend-ignore =
+    # blank-line formatting (pre-existing throughout codebase)
+    E301,
+    E302,
+    E303,
+    E305,
+    # whitespace cosmetics
+    W291,
+    W292,
+    W293,
+    W391,
+    # slice/annotation spacing (Black-compatible style)
+    E203,
+    # operator/keyword spacing
+    E221,
+    E225,
+    E231,
+    # indentation/alignment
+    E122,
+    E127,
+    E201,
+    E202,
+    E251,
+    E272,
+    # long lines in prompt strings
+    E501,
+    # f-strings used as plain strings
+    F541,
+    # variable shadowing (chain redefined per function scope)
+    F811

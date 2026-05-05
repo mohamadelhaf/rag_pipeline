@@ -6,7 +6,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda, chain
+from langchain_core.runnables import RunnableLambda
 import os
 from logger import log_interaction
 import time
@@ -30,7 +30,7 @@ def ensure_ingested():
         if not collections:
             print("No collections found in ChromaDB. Running ingestions ")
             subprocess.run(["python", "ingest.py"], check=True)
-    except Exception as e:
+    except Exception:
         print("ChromaDB not ready. Running ingestions.")
         subprocess.run(["python", "ingest.py"], check=True)
 

@@ -84,7 +84,7 @@ def ingest_docs(reset=False):
 
     print("creating embeddings and storing in ChromaDB")
     embeddings = OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), base_url=os.getenv("OLLAMA_BASE_URL"))
-    vectorstore = Chroma.from_documents(documents=all_chunks, embedding=embeddings, persist_directory=chroma_path)
+    Chroma.from_documents(documents=all_chunks, embedding=embeddings, persist_directory=chroma_path)
     print(f"stored {len(all_chunks)} chunks in ChromaDB")
     print("Ingestion complete")
 
