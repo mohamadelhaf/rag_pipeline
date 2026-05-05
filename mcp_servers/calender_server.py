@@ -38,7 +38,7 @@ def get_access_token():
 def graph_get(endpoint: str) -> dict:
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers)
+    response = requests.get(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers, timeout=30)
     response.raise_for_status()
     return response.json()
 
@@ -48,7 +48,7 @@ def graph_post(endpoint: str, data: dict) -> dict:
     # fix: was "Contetn-Type" (typo)
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     # fix: was `response = response.post(...)` — called before assignment
-    response = requests.post(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers, json=data)
+    response = requests.post(f"https://graph.microsoft.com/v1.0{endpoint}", headers=headers, json=data, timeout=30)
     response.raise_for_status()
     return response.json()
 

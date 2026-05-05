@@ -56,9 +56,9 @@ jobs:
       - name: Install dependencies and security tools
         run: pip install -r requirements.txt bandit pip-audit
 
-      # scan source only (exclude venv and test artefacts)
+      # scan source files explicitly — avoids bandit incorrectly traversing .venv
       - name: Bandit — source security scan
-        run: bandit -r . --exclude ./.venv,./chroma_db,./logs,./data -ll
+        run: bandit -r api.py chat.py ingest.py rag.py orchestrator.py logger.py mcp_servers/ -ll
 
       # audit the already-installed environment — avoids dep-resolution conflicts
       - name: pip-audit — dependency vulnerability scan
