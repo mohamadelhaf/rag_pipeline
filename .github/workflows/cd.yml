@@ -68,9 +68,17 @@ jobs:
 
     permissions:
       contents: read
+      packages: read
       security-events: write   # needed to upload SARIF results
 
     steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Trivy on the pushed image
         uses: aquasecurity/trivy-action@master
         with:
@@ -97,6 +105,13 @@ jobs:
       packages: read
 
     steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0
         with:
