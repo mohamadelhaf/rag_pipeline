@@ -12,7 +12,7 @@ python-dotenv==1.2.2
 msal==1.35.1
 requests==2.33.0
 ollama==0.6.1
-fastapi==0.115.12
+fastapi==0.135.3
 uvicorn==0.42.0
 
 # pinned to patched versions to resolve known CVEs in transitive deps
@@ -21,4 +21,4 @@ cryptography==46.0.7
 langsmith==0.7.31
 python-multipart==0.0.26
 werkzeug==3.1.6
-starlette==0.49.1
+starlette==1.0.0
