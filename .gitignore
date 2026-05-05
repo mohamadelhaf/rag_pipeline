@@ -1,8 +1,35 @@
-chromad_db/
-.env
+# Python
 __pycache__/
-.venv/
-EOF
-.env.local
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment (keep .env.example)
+.env
+.env.local
+
+# Runtime data
+chroma_db/
 logs/
+
+# Dev tools
+requirements-dev.txt
+.flake8

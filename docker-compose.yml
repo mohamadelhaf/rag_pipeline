@@ -18,13 +18,13 @@ services:
     container_name: energyco-ollama-pull
     volumes:
       - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
     entrypoint: >
       /bin/sh -c "
         ollama pull mistral &&
         ollama pull nomic-embed-text
       "
-    environment:
-      - OLLAMA_HOST=http://ollama:11434
     depends_on:
       ollama:
         condition: service_healthy
@@ -41,6 +41,28 @@ services:
     depends_on:
       ollama_pull:
         condition: service_completed_successfully
+
+  api:
+    build: .
+    container_name: energyco-api
+    # CMD from Dockerfile: uvicorn api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_db:/app/chroma_db
+      - ./logs:/app/logs
+    env_file:
+      - .env
+    depends_on:
+      ingest:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   chat_app:
     build: .
